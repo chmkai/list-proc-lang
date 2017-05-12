@@ -3,7 +3,7 @@
 
 
 
-### Syntax Guide###
+### Syntax Guide ###
 
 The basic building block of LLP (can someone come up with a better name?) are _lists_.
 Lists are groups of elements (known as _atoms_)  to be interpreted by LLP. They are represented by strings , limited by ` `s (whitespace) , bounded by square-brackets , as shown below:
