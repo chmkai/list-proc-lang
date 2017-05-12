@@ -11,17 +11,17 @@ To add main features:
 
 To fix bugs, **please** use the `hotfix` branch and do the same as above
 
-### Syntax Guide###
+### Syntax Guide ###
 
 The basic building block of LLP (can someone come up with a better name?) are _lists_.
-Lists are groups of elements (known as _atoms_)  to be interpreted by LLP. They are represented by strings , limited by ` `s (whitespace) , bounded by square-brackets , as shown below:
+Lists are groups of elements (known as _atoms_)  to be interpreted by LLP. They are represented by strings , delimited by whitespace , bounded by square-brackets , as shown below:
 
  `[atom0 atom1 atom2]`
 
 Lists in general will hold an array of values.
 For example, a list of the first 3 natural numbers would be,
 
-`[0 1 2]`
+`[1 2 3]`
 
 Statements are to be formed by using the name of a function as the 0th atom, its arguments being the rest, and using parentheses in place of square-brackets:
 
@@ -68,7 +68,7 @@ Variables can be assigned using `var` as the 0th atom. For example,
 
 Anonymous functions are created with the `lambda` keyword as the the 0th atom, followed by a _list_ of arguments , and a _list_ **OR** _block_ of elements. For example,
 
-`(lambda (x) (x+1))`
+`(lambda [x] [x+1])`
 
 would create an incrementing function.
 
@@ -87,11 +87,11 @@ would create an incrementing function.
 
 In order to create a named function, we simply replace `lambda` with `defun`, followed by the name of the function.
 
-`(defun name (arg) { })`
+`(defun name [arg] { })`
 
 OR
 ```
-(defun name (arg)
+(defun name [arg]
     {
 
     }
@@ -129,14 +129,12 @@ Example:
 * `(and (c x = 5) (c y = 2))`
 * `(not (x > 5))`
 
-Testing the success of a statement can be done with `try`:
-
+Testing the success of a statement can be done with `try`. This gives `atom1` the value `1` if the execution of the 2nd statement fails
 ```
-(try (x))
+(try (x)
     (print "sdaodosj")
 )
 ```
 
-_try_ gives `atom1` the value `1` if the execution of the 2nd statement fails
 
 - - - -

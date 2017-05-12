@@ -1,0 +1,11 @@
+This is a rough list of features that need to be implemented into the language.
+1.Printing to screen.
+2.At least 5 variables of type integer.
+3.Reading variables.
+4.Basic arithmetic operations (+,-,*,/).
+
+This will be the framework. On top of that, if time permits, we add-
+5.Character variables.
+6.Custom functions.
+7.Comparisons.
+8.Loops.

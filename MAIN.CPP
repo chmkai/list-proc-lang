@@ -1,3 +1,5 @@
+
+//List-Processor
 //This is where the code for our program will be written.
 //This is basic for now.
 //Make new issues for each modification. This is the main dev.
@@ -32,7 +34,7 @@ void readinputandstore()
 
 
 
-
+What the hell did you say about me, you piece of shit? Ill have you know ...... Is this the navy seal copypasta?
 
 
 
