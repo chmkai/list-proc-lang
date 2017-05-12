@@ -31,7 +31,7 @@ void readinputandstore()
   fin.close();
 }
 
-
+//swuareds
 
 
 
