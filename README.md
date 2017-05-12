@@ -21,7 +21,7 @@ Lists are groups of elements (known as _atoms_)  to be interpreted by LLP. They 
 Lists in general will hold an array of values.
 For example, a list of the first 3 natural numbers would be,
 
-`[0 1 2]`
+`[1 2 3]`
 
 Statements are to be formed by using the name of a function as the 0th atom, its arguments being the rest, and using parentheses in place of square-brackets:
 
@@ -68,7 +68,7 @@ Variables can be assigned using `var` as the 0th atom. For example,
 
 Anonymous functions are created with the `lambda` keyword as the the 0th atom, followed by a _list_ of arguments , and a _list_ **OR** _block_ of elements. For example,
 
-`(lambda (x) (x+1))`
+`(lambda [x] [x+1])`
 
 would create an incrementing function.
 
@@ -87,11 +87,11 @@ would create an incrementing function.
 
 In order to create a named function, we simply replace `lambda` with `defun`, followed by the name of the function.
 
-`(defun name (arg) { })`
+`(defun name [arg] { })`
 
 OR
 ```
-(defun name (arg)
+(defun name [arg]
     {
 
     }
