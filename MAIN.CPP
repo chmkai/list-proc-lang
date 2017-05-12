@@ -31,18 +31,7 @@ void readinputandstore()
   fin.close();
 }
 
-
-
-
-What the hell did you say about me, you piece of shit? Ill have you know ...... Is this the navy seal copypasta?
-
-
-
-
-
-
-
-
+/*Now we have input stored. We need to analyze this input and process it in order to program using this language.*/
 
 void main()
 {
