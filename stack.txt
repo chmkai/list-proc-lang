@@ -1,0 +1,43 @@
+// stack
+class stack
+{
+    func fp[8]]; // function pointer
+    int top;
+pulbic:
+    stack()
+    {
+        top = -1;
+    }
+    push(func f)
+    {
+        if(top!=7)
+        {
+            top+=1;
+            strcpy(fp[top].name,f.name);
+            for(int i = 0; i < 8; i++)
+                strcpy(fp[top].argv[i],f.argv[i]);
+        }
+        else
+            cout<<"[ERROR]Stack Overflow[ERROR]";
+    }
+    pop(func f)
+    {
+        if(top!=-1)
+        {
+            top-=1;
+        }
+        else
+            cout<<"[ERROR]Stack underflow[ERROR]";
+    }
+    top()
+    {return top;}
+};
+
+class func
+{
+    char name[10];
+    char argv[8][8];
+public:
+    func()
+    {name = "lambda";}
+}
