@@ -1,4 +1,4 @@
-# LIST PROCESSOR LANGUAGE (LLP) #
+# LIST PROCESSOR LANGUAGE (SLang) #
 ## -- NOTICE : APPROVED COLLABORATORS ONLY -- ##
 
 ### Contributing ###
@@ -13,8 +13,8 @@ To fix bugs, **please** use the `hotfix` branch and do the same as above
 
 ### Syntax Guide ###
 
-The basic building block of LLP (can someone come up with a better name?) are _lists_.
-Lists are groups of elements (known as _atoms_)  to be interpreted by LLP. They are represented by strings , delimited by whitespace , bounded by square-brackets , as shown below:
+The basic building block of SLang (can someone come up with a better name?) are _lists_.
+Lists are groups of elements (known as _atoms_)  to be interpreted by SLang. They are represented by strings , delimited by whitespace , bounded by square-brackets , as shown below:
 
  `[atom0 atom1 atom2]`
 
@@ -55,7 +55,7 @@ Blocks of code would be represented by braces ` {` and `}`.
 ```
 would print `25`, leaving the first statement alone.
 
-LLP _atoms_ will have types:
+SLang _atoms_ will have types:
 
 - num (ordinary numbers)
 - char (character variables)
@@ -95,7 +95,8 @@ OR
     {
 
     }
-)```
+)
+```
 
 #### Control Structure ####
 
