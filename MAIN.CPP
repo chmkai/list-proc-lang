@@ -9,6 +9,32 @@
 #include <fstream.h>
 #include <stdio.h>
 
+//Function to read stuff
+class func
+{
+  public:
+  char argv[100][100]
+
+};
+
+void parselist()
+{
+  char a;
+  ifstream fin("llp.txt");
+  int i=0,x=0;
+  
+  while(fin.get(a))
+  {
+    if (a=='(')
+      x+=1;
+    if (a==')')
+      x-=1;
+    argv[x][i]=a;    
+  }
+  fin.close();
+}
+
+
 //Need to make functions.
 
 void readinputandstore()
@@ -16,7 +42,7 @@ void readinputandstore()
   cout<<"Enter "end" when the code is finished.";
   cout<<endl<<endl;
   
-  ifstream fin("lpp.txt");
+  ofstream fout("lpp.txt");
   
   char word[80];
   
@@ -25,11 +51,11 @@ void readinputandstore()
     gets(word);
     
     if(strcmpi(word,"end")!=0)
-        fin>>word;
+        fout<<word;
     else 
         break;
   }
-  fin.close();
+  fout.close();
 }
 
 
