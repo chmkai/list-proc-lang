@@ -34,7 +34,7 @@ void readinputandstore()
 
 
 
-What the hell did you say about me, you piece of shit? Ill have you know ...... Is this the navy seal copypasta?
+
 
 
 
