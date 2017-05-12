@@ -56,6 +56,7 @@ void readinput(char fname[])
 {
     ifstream fin(fname);
     
+
 }
 
 void main
