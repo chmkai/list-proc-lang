@@ -1,7 +1,15 @@
 # LIST PROCESSOR LANGUAGE (LLP) #
 ## -- NOTICE : APPROVED COLLABORATORS ONLY -- ##
 
+### Contributing ###
+To add main features:
+- **please** _pull / clone_ from the `dev` branch.
+- make the required modifications
+- **push** to the `dev` branch
+- when you are ***110%*** sure that everything is working alright,
+- make a _pull request_ to the `master` branch
 
+To fix bugs, **please** use the `hotfix` branch and do the same as above
 
 ### Syntax Guide###
 
