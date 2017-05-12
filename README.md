@@ -3,9 +3,10 @@
 
 ### Contributing ###
 To add main features:
-- **please** _pull / clone_ from the `dev` branch.
-- make the required modifications
-- **push** to the `dev` branch
+- create a new branch for yourself, say `userdev`
+- **please** _pull / clone_ from the `userdev` branch.
+- make the required changes
+- **push** to the `userdev` branch
 - when you are ***110%*** sure that everything is working alright,
 - make a _pull request_ to the `master` branch
 
@@ -132,7 +133,7 @@ Example:
 
 Testing the success of a statement can be done with `try`. This gives `atom1` the value `1` if the execution of the 2nd statement fails
 ```
-(try (x)
+(try x
     (print "sdaodosj")
 )
 ```
