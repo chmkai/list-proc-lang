@@ -1,3 +1,4 @@
+
 //List-Processor
 //This is where the code for our program will be written.
 //This is basic for now.
@@ -9,6 +10,39 @@
 #include <stdio.h>
 
 //Need to make functions.
+
+void readinputandstore()
+{
+  cout<<"Enter "end" when the code is finished.";
+  cout<<endl<<endl;
+  
+  ifstream fin("lpp.txt");
+  
+  char word[80];
+  
+  do
+  {
+    gets(word);
+    fin>>word;
+   
+  }
+  while(strcmpi("end",word)!=0);
+  
+  fin.close();
+}
+
+
+
+
+What the hell did you say about me, you piece of shit? Ill have you know ...... Is this the navy seal copypasta?
+
+
+
+
+
+
+
+
 
 void main()
 {
