@@ -20,32 +20,61 @@ void readinputandstore()
   
   char word[80];
   
-  do
+  for(;;)
   {
     gets(word);
-    fin>>word;
-   
+    
+    if(strcmpi(word,"end")!=0)
+        fin>>word;
+    else 
+        break;
   }
-  while(strcmpi("end",word)!=0);
-  
   fin.close();
 }
 
-//swuareds
+
+/*Now we have input stored. We need to analyze this input and process it in order to program using this language.*/
+
+void processing()
+{
+  
+}
 
 
+void menu()
+{
+  int op;
 
-
-
-
-
-
-
+  do{
+    
+  clrscr();
+    
+  cout<<"Hello and welcome to SLANG, a student-made programming language! Here, you will learn the basics of programming.\n"
+  cout<<"Kindly refer to the chart on your left for further instructions, because Kolko was lazy and forgot to programme this in.\n"
+  
+  cout<<"\n\nMENU\n\n\n";
+  
+  cout<<"1.Begin writing code.\n";
+  cout<<"2.Run the code.\n";
+  cout<<"3.Exit.\n";
+  
+  cout<<"\n\n\nSelect an option (number please!) :";
+  cin>>op;
+  
+  switch (op)
+    {
+      case 1: readinputandstore();break;
+      
+      case 2: processing();break;  
+    }
+  }while(op!=3);    
+}
 
 
 
 void main()
 {
   cout<<"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas eget nibh vitae lorem scelerisque aliquam quis a metus. Sed et."
+  menu();
   getch();
 }
