@@ -42,6 +42,7 @@ void parselist()
 //Need to make functions.
 
 void readinputandstore()
+
 {
   cout<<"Enter "end" when the code is finished.";
   cout<<endl<<endl;
@@ -79,7 +80,7 @@ void menu()
     
   clrscr();
     
-  cout<<"Hello and welcome to SLANG, a student-made programming language! Here, you will learn the basics of programming.\n"
+  cout<<"Hello and welcome to SLANG++, a student-made programming language! Here, you will learn the basics of programming.\n"
   cout<<"Kindly refer to the chart on your left for further instructions, because Kolko was lazy and forgot to programme this in.\n"
   
   cout<<"\n\nMENU\n\n\n";
@@ -90,14 +91,15 @@ void menu()
   
   cout<<"\n\n\nSelect an option (number please!) :";
   cin>>op;
-  
-  switch (op)
-    {
-      case 1: readinputandstore();break;
+   
+    if(op>0)
+     switch (op)
+     {
+       case 1: readinputandstore();break;
       
-      case 2: processing();break;  
-    }
-  }while(op!=3);    
+       case 2: processing();break;  
+     }
+  } while(op!=3);    
 }
 
 
