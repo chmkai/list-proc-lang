@@ -1,80 +1,65 @@
-//List-Processor
-//This is where the code for our program will be written.
-//This is basic for now.
-//Make new issues for each modification. This is the main dev.
-
 #include <iostream.h>
 #include <conio.h>
 #include <fstream.h>
 #include <stdio.h>
 
-//Need to make functions.
-
-void readinputandstore()
+class stack //This is the call stack. It acts as a virtual stack machine..
 {
-  cout<<"Enter "end" when the code is finished.";
-  cout<<endl<<endl;
-  
-  ifstream fin("lpp.txt");
-  
-  char word[80];
-  
-  for(;;)
-  {
-    gets(word);
-    
-    if(strcmpi(word,"end")!=0)
-        fin>>word;
-    else 
-        break;
-  }
-  fin.close();
-}
-
-
-/*Now we have input stored. We need to analyze this input and process it in order to program using this language.*/
-
-void processing()
-{
-  
-}
-
-
-void menu()
-{
-  int op;
-
-  do{
-    
-  clrscr();
-    
-  cout<<"Hello and welcome to SLANG, a student-made programming language! Here, you will learn the basics of programming.\n"
-  cout<<"Kindly refer to the chart on your left for further instructions, because Kolko was lazy and forgot to programme this in.\n"
-  
-  cout<<"\n\nMENU\n\n\n";
-  
-  cout<<"1.Begin writing code.\n";
-  cout<<"2.Run the code.\n";
-  cout<<"3.Exit.\n";
-  
-  cout<<"\n\n\nSelect an option (number please!) :";
-  cin>>op;
-  
-  switch (op)
+    func fp[8]]; // function pointer
+    int top;
+public:
+    stack()
     {
-      case 1: readinputandstore();break;
-      
-      case 2: processing();break;  
+        top = -1;
     }
-  }while(op!=3);    
-}
+    push(func f) //adds function to the top of the stack
+    {
+        if(top!=7)
+        {
+            top+=1;
+            strcpy(fp[top].name,f.name);
+            for(int i = 0; i < 8; i++)
+                strcpy(fp[top].argv[i],f.argv[i]);
+        }
+        else
+            cout<<"[ERROR]Stack Overflow[ERROR]";
+    }
+    pop(func f) // takes out the last element in the stack
+    {
+        if(top!=-1)
+        {
+            top-=1;
+        }
+        else
+            cout<<"[ERROR]Stack underflow[ERROR]";
+    }
+    top()
+    {return top;}
+};
 
-
-
-void main()
+class func //Statement functions
 {
-  cout<<"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas eget nibh vitae lorem scelerisque aliquam quis a metus. Sed et."
-  menu();
-  getch();
+    char name[10];
+    char argv[8][8];
+public:
+    func()
+    {name = "lambda";}
+    func(char n[], char* a[][]) // Copy Constructor
+    {
+        strcpy(name,n);
+        for(int i = 0; i < 8 ; i++)
+            strcpy(argv[i],a)
+    }
 }
 
+void readinput(char fname[])
+{
+    ifstream fin(fname);
+    
+
+}
+
+void main
+{
+
+}
