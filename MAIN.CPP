@@ -3,7 +3,7 @@
 #include <fstream.h>
 #include <stdio.h>
 
-class stack //This is the call stack.The whole thing happens from here
+class stack //This is the call stack. It acts as a virtual stack machine..
 {
     func fp[8]]; // function pointer
     int top;
@@ -44,4 +44,21 @@ class func //Statement functions
 public:
     func()
     {name = "lambda";}
+    func(char n[], char* a[][]) // Copy Constructor
+    {
+        strcpy(name,n);
+        for(int i = 0; i < 8 ; i++)
+            strcpy(argv[i],a)
+    }
+}
+
+void readinput(char fname[])
+{
+    ifstream fin(fname);
+    
+}
+
+void main
+{
+
 }
