@@ -14,7 +14,7 @@ To fix bugs, **please** use the `hotfix` branch and do the same as above
 ### Syntax Guide ###
 
 The basic building block of LLP (can someone come up with a better name?) are _lists_.
-Lists are groups of elements (known as _atoms_)  to be interpreted by LLP. They are represented by strings , limited by ` `s (whitespace) , bounded by square-brackets , as shown below:
+Lists are groups of elements (known as _atoms_)  to be interpreted by LLP. They are represented by strings , delimited by whitespace , bounded by square-brackets , as shown below:
 
  `[atom0 atom1 atom2]`
 
@@ -129,14 +129,12 @@ Example:
 * `(and (c x = 5) (c y = 2))`
 * `(not (x > 5))`
 
-Testing the success of a statement can be done with `try`:
-
+Testing the success of a statement can be done with `try`. This gives `atom1` the value `1` if the execution of the 2nd statement fails
 ```
-(try (x))
+(try (x)
     (print "sdaodosj")
 )
 ```
 
-_try_ gives `atom1` the value `1` if the execution of the 2nd statement fails
 
 - - - -
