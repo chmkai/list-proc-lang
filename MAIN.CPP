@@ -19,18 +19,22 @@ class func
 
 void parselist()
 {
-  char a;
+  char atom[100];
   ifstream fin("llp.txt");
   int i=0,x=0;
   
-  while(fin.get(a))
+  while(fin>>atom)
   {
-    if (a=='(')
+    if(atom[0]=='(')
       x+=1;
-    if (a==')')
+    if(atom[strlen(atom)]==')')
       x-=1;
-    argv[x][i]=a;    
+   
+    if(x!=0)
+      strcpy(argv[i],atom);
+    i++;  
   }
+
   fin.close();
 }
 
