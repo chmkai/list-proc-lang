@@ -32,12 +32,14 @@ void readinputandstore()
   fin.close();
 }
 
+
 /*Now we have input stored. We need to analyze this input and process it in order to program using this language.*/
 
 void processing()
 {
   
 }
+
 
 void menu()
 {
@@ -67,6 +69,8 @@ void menu()
     }
   }while(op!=3);    
 }
+
+
 
 void main()
 {
