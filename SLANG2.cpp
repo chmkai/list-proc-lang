@@ -33,6 +33,28 @@ void readinputandstore()
 
 //Treat input as lines. Process accordingly.
 
+void process()
+{
+    ifstream fin("lpp.txt")
+    char st[80];
+      
+    while(fin.getine(st))
+    {
+      if (st[0]=='p')
+        print(st);
+      else if(st[0]=='a')
+        add(st);
+      else if(st[0]=='s')
+        subtract(st);
+      else if(st[0]=='a')
+        multiply(st);
+      else if(st[0]=='a')
+        divide(st);
+    }
+  
+  fin.close();
+}
+
 
 
 
