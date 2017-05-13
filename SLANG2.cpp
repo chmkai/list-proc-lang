@@ -7,7 +7,6 @@
 #include <conio.h>
 #include <fstream.h>
 #include <stdio.h>
-
 //Predefined variables
 int v=0,w=0,x=0,y=0,z=0
 
@@ -22,15 +21,12 @@ void readinputandstore()
   
   char word[80];
   
-  for(;;)
+  do
   {
     gets(word);
-    
-    if(strcmpi(word,"end")!=0)
         fout<<word;
-    else 
-        break;
   }
+	while(strcmpi(word,"end")!=0)
   fout.close();
 }
 
@@ -102,8 +98,8 @@ void menu()
   cout<<"Hello and welcome to SLANG2, a student-made programming language! Here, you will learn the basics of programming.\n"
   cout<<"Kindly refer to the chart on your left for further instructions, because Kolko was lazy and forgot to programme this in.\n"
   
-  cout<<"\n\nMENU\n\n\n";
-  
+  cout<<"\t\tMENU\n";
+  cout<<"\t\t____\n\n\n";
   cout<<"1.Begin writing code.\n";
   cout<<"2.Run the code.\n";
   cout<<"3.Exit.\n";
