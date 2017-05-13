@@ -1,0 +1,14 @@
+reserved integer variables ----- v,w,x,y,z
+functions ------ add,subtract,multiply,divide,print,read
+NOTE 1 VARIABLES ARE PREDEFINED 
+terminator ----- end
+
+DONE
+print
+variables- exist and printing, need to allow to create by user
+
+
+
+
+NEED TO DO
+create
