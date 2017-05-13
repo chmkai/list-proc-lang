@@ -1,14 +1,14 @@
 #include <iostream.h>
 #include <conio.h>
 #include <fstream.h>
-#include <stdio.h>
+#include <strings.h>
 #include <stdio.h>
 
-union atomu
+union atomu // Atom data union for use in atom class
 {
     float num;
     char ch;
-    int ptr;
+    int ptr; // integer added to heap.baseaddr() to get pointer to heapitem with pointer to unparsed string....woah, thi is getting meta...
 };
 
 class heapitem
@@ -16,34 +16,44 @@ class heapitem
     int* ptr; // REAL pointer to stored object
     char name[10]; // Identifier for reserved keyword, function,or varaible; in that order
 public:
-    heapitem(int* p , char * i)
+    heapitem()
+    {
+        strcpy(name,"NIL")
+    }
+    heapitem(int* p , char* i)
     {
         ptr = p;
         strcpy(name, i);
     }
-    addr()
+    addr() // Return pointer
     {return ptr;}
-    id()
+    id()  // Return identifier
     {return name;}
-}
+};
 
-class heap // Virtual Heap
+class heap // Virtual Heap -- Data store for everything
 {
-    heapitem* index[256]; // Array of heapitem pointers. NOT pointer to heapitem array.
+    heapitem index[32]; // Array of heapitem pointers. NOT pointer to heapitem array.
 public:
-    baseaddr() //returns 0-address of heap index
+    heapitem* baseaddr() //returns 0-address of heap index
         {return &(index[0]);}
-    falloc() //Allocates Statement
+    heapitem* _alloc(userdefun f) //Allocates Statement
     {
-
+// @TODO MAKE THIS
     }
-    valloc() //allocates user-defined varaibles, strings and arrays, and other really long atoms
+    heapitem* _alloc(atom a) //allocates user-defined variables, strings and arrays, and other really long atoms
     {
-
+// @TODO MAKE THIS
     }
-}
+    heapitem* request() // Requests free memory space
+    {
+        for(int i = 0; i < 32; i++)
+            if(strcmpi(index[i].retname(),"NIL"))
+                return (&(index[0]) + i);
+    }
+};
 
-class stack //This is the call stack. It acts as a virtual stack machine..
+class stack //This is the call stack. It acts as a virtual stack machine.
 {
     func fp[8]]; // function array
     int top; // The level of meta we're at.
@@ -52,7 +62,7 @@ public:
     {
         top = -1; // UNLIMITED META
     }
-    push(func f) // Adds function to the top of the stack
+    void push(func f) // Adds function to the top of the stack
     {
         if(top!=7) // Limited Meta?
         {
@@ -64,16 +74,16 @@ public:
         else
             cout<<"[ERROR]Stack Overflow[ERROR]"<<endl;
     }
-    pop(func f) // takes out the last element in the stack
+    void pop(func f) // takes out the last element in the stack
     {
-        if(top!=-1) // More than technically physically limited meta!
+        if(top!=-1) // More than technically limited meta!
         {
             top-=1;
         }
         else
             cerr<<"[ERROR]Stack underflow[ERROR]"<<endl;
     }
-    top() // Returns to Ravenholm... We don't go there anymore....
+    int l() // Returns to Ravenholm... We don't go there anymore....
     {return top;}
 };
 
@@ -82,7 +92,20 @@ class atom
     char type;
     atomu val;
 public:
-    settype(char t)
+    atom(atom x) // COPY CONSTRUCTOR -- yes, we need this
+    {
+        type = x.type;
+        switch (tolower(x.type))
+        {
+            case 'n':
+                val.num = x.val.num; break;
+            case 'c':
+                val.ch = x.val.ch;
+            case 'p':
+                val.ptr = x.val.ptr;
+        }
+    }
+    void settype(char t)
     {
         switch (t) {
             case 'n': case 'N':
@@ -112,25 +135,38 @@ public:
             cerr<<"[ERROR]asked to return unknown type"<<t<<" [ERROR]"<<endl;
         }
     }
-
+    // @TODO -add a set-value-function , checking the type and safely assigning both the `type` and `val` values
 };
 
 class func //Statement functions
 {
+protected:
     char name[10]; // Function identifier
-    char argv[8][8]; // argument vector using array of strings
+    atom argv[8]; // argument vector using array of strings
 public:
     func()
     {name = "lambda";} // Keeps nameless functions as "lambda"
-    func(char n[], char* a[][]) // Copy Constructor // Do we need this?
+    func(char n[], char* a[][]) // Constructor
     {
         strcpy(name,n);
         for(int i = 0; i < 10 ; i++)
-            strcpy(argv[i],a)
+            strcpy(argv[i],a);
+    }
+    func(func x) // Constructor
+    {
+        strcpy(name,x.name);
+        for(int i = 0; i < 10 ; i++)
+            strcpy(argv[i],x.argv[i]);
     }
     char* getname()
     {return name;}
-}
+};
+
+class userdefun:public func // User defined function class
+{
+protected:
+    char* list;
+};
 
 void readinput(char fname[]) //Base input function
 {
@@ -160,7 +196,7 @@ char* parselist(stack &calls, ifstream &fin) // For parsing individual lists - r
 }
 */
 void main
-{
+{   // @TODO :
     //Add some way to "include" function definition files?
     //These could contain function definitions created from basic ones
     //Decide if we are going to read directly from a text file
