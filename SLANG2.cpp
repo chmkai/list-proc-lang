@@ -1,4 +1,4 @@
-//List-Processor
+//Line-Processor
 //This is where the code for our program will be written.
 //This is basic for now.
 //Make new issues for each modification. This is the main dev.
@@ -55,17 +55,13 @@ void process()
   fin.close();
 }
 
-
-
-
-
-
-
-
-
-
-
-
+//Prints
+void print(char st[])
+{
+  for (int i=5;i<strlen(st);i++)
+     cout<<st[i];
+  cout<<endl;
+}
 
 /*Now we have input stored. We need to analyze this input and process it in order to program using this language.*/
 
@@ -77,7 +73,7 @@ void menu()
     
   clrscr();
     
-  cout<<"Hello and welcome to SLANG, a student-made programming language! Here, you will learn the basics of programming.\n"
+  cout<<"Hello and welcome to SLANG2, a student-made programming language! Here, you will learn the basics of programming.\n"
   cout<<"Kindly refer to the chart on your left for further instructions, because Kolko was lazy and forgot to programme this in.\n"
   
   cout<<"\n\nMENU\n\n\n";
@@ -97,8 +93,6 @@ void menu()
     }
   }while(op!=3);    
 }
-
-
 
 void main()
 {
