@@ -8,6 +8,9 @@
 #include <fstream.h>
 #include <stdio.h>
 
+//Predefined variables
+int v=0,w=0,x=0,y=0,z=0
+
 //Need to make functions.
 
 void readinputandstore()
@@ -50,6 +53,8 @@ void process()
         multiply(st);
       else if(st[0]=='d')
         divide(st);
+			else if(st[0]=='r')
+				read(st);
     }
   
   fin.close();
@@ -58,8 +63,29 @@ void process()
 //Prints
 void print(char st[])
 {
-  for (int i=5;i<strlen(st);i++)
+	int textflag=0;
+  for (int i=7;i<strlen(st);i++)
+	{
+		if(st[6]=='"')
+		{
      cout<<st[i];
+			textflag=1;
+		}
+		if(st[i]=='"')
+			break;
+	}
+	
+	if (textflag==0)
+		switch (st[6])
+		{
+			  case 'v':		cout<<v;break;
+				case 'w':		cout<<w;break;
+				case 'x':		cout<<x;break;
+				case 'y':		cout<<y;break;
+				case 'z':		cout<<z;break;
+		}
+	
+	
   cout<<endl;
 }
 
