@@ -8,36 +8,6 @@
 #include <fstream.h>
 #include <stdio.h>
 
-//Function to read stuff
-class func
-{
-  public:
-  char argv[100][100]
-
-};
-
-void parselist()
-{
-  char atom[100];
-  ifstream fin("llp.txt");
-  int i=0,x=0;
-  
-  while(fin>>atom)
-  {
-    if(atom[0]=='(')
-      x+=1;
-    if(atom[strlen(atom)]==')')
-      x-=1;
-   
-    if(x!=0)
-      strcpy(argv[i],atom);
-    i++;  
-  }
-
-  fin.close();
-}
-
-
 //Need to make functions.
 
 void readinputandstore()
@@ -61,14 +31,21 @@ void readinputandstore()
   fout.close();
 }
 
+//Treat input as lines. Process accordingly.
+
+
+
+
+
+
+
+
+
+
+
+
 
 /*Now we have input stored. We need to analyze this input and process it in order to program using this language.*/
-
-void processing()
-{
-  
-}
-
 
 void menu()
 {
