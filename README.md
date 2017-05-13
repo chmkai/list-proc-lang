@@ -1,11 +1,12 @@
-# LIST PROCESSOR LANGUAGE (LLP) #
+# LIST PROCESSOR LANGUAGE (SLang) #
 ## -- NOTICE : APPROVED COLLABORATORS ONLY -- ##
 
 ### Contributing ###
 To add main features:
-- **please** _pull / clone_ from the `dev` branch.
-- make the required modifications
-- **push** to the `dev` branch
+- create a new branch for yourself, say `userdev`
+- **please** _pull / clone_ from the `userdev` branch.
+- make the required changes
+- **push** to the `userdev` branch
 - when you are ***110%*** sure that everything is working alright,
 - make a _pull request_ to the `master` branch
 
@@ -13,8 +14,8 @@ To fix bugs, **please** use the `hotfix` branch and do the same as above
 
 ### Syntax Guide ###
 
-The basic building block of LLP (can someone come up with a better name?) are _lists_.
-Lists are groups of elements (known as _atoms_)  to be interpreted by LLP. They are represented by strings , delimited by whitespace , bounded by square-brackets , as shown below:
+The basic building block of SLang (can someone come up with a better name?) are _lists_.
+Lists are groups of elements (known as _atoms_)  to be interpreted by SLang. They are represented by strings , delimited by whitespace , bounded by square-brackets , as shown below:
 
  `[atom0 atom1 atom2]`
 
@@ -55,7 +56,7 @@ Blocks of code would be represented by braces ` {` and `}`.
 ```
 would print `25`, leaving the first statement alone.
 
-LLP _atoms_ will have types:
+SLang _atoms_ will have types:
 
 - num (ordinary numbers)
 - char (character variables)
@@ -95,7 +96,8 @@ OR
     {
 
     }
-)```
+)
+```
 
 #### Control Structure ####
 
@@ -131,7 +133,7 @@ Example:
 
 Testing the success of a statement can be done with `try`. This gives `atom1` the value `1` if the execution of the 2nd statement fails
 ```
-(try (x)
+(try x
     (print "sdaodosj")
 )
 ```
