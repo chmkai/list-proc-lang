@@ -46,9 +46,9 @@ void process()
         add(st);
       else if(st[0]=='s')
         subtract(st);
-      else if(st[0]=='a')
+      else if(st[0]=='m')
         multiply(st);
-      else if(st[0]=='a')
+      else if(st[0]=='d')
         divide(st);
     }
   
