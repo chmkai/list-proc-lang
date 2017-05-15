@@ -11,6 +11,38 @@ union atomu // Atom data union for use in atom class
     int ptr; // integer added to heap.baseaddr() to get pointer to heapitem with pointer to unparsed string....woah, thi is getting meta...
 };
 
+/* PARSER RESOLVE -- KolkonutDev1
+class func
+{
+  public:
+  char argv[100][100]
+
+};
+void parselist()
+{
+  char atom[100];
+  ifstream fin("llp.txt");
+  int i=0,x=0;
+  
+  while(fin>>atom)
+  {
+    if(atom[0]=='(')
+      x+=1;
+    if(atom[strlen(atom)]==')')
+      x-=1;
+   
+    if(x!=0)
+      strcpy(argv[i],atom);
+    i++;  
+  }
+
+  fin.close();
+}
+
+
+*/ //Keep reference, delete later
+
+
 class heapitem
 {
     int* ptr; // REAL pointer to stored object
@@ -35,9 +67,11 @@ public:
     }
     int* addr() // Return pointer
     {return ptr;}
+
     char* id()  // Return identifier
     {return name;}
 };
+
 
 class heap // Virtual Heap -- Data store for everything
 {
@@ -253,6 +287,27 @@ char* parselist(stack &calls, ifstream &fin) // For parsing individual lists - r
 
 }
 */
+/* KolkonutDev1 RESOLVE
+  cout<<"Enter "end" when the code is finished.";
+  cout<<endl<<endl;
+  
+  ofstream fout("lpp.txt");
+  
+  char word[80];
+  
+  for(;;)
+  {
+    gets(word);
+    
+    if(strcmpi(word,"end")!=0)
+        fout<<word;
+    else 
+        break;
+  }
+  fout.close();
+  
+*/ //Keep as ref , delete later
+
 void main
 {   // @TODO :
     //Add some way to "include" function definition files?
