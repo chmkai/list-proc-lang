@@ -6,7 +6,7 @@
 
 union atomu // Atom data union for use in atom class
 {
-    float num;
+    int num;
     char ch;
     int ptr; // integer added to heap.baseaddr() to get pointer to heapitem with pointer to unparsed string....woah, thi is getting meta...
 };
@@ -92,7 +92,7 @@ class atom
     char type;
     atomu val;
 public:
-    atom(){;}
+    atom(){;} // Do we need this?
     atom(atom x) // COPY CONSTRUCTOR -- yes, we need this
     {
         type = x.type;
