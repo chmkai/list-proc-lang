@@ -18,7 +18,7 @@ class heapitem
 public:
     heapitem()
     {
-        strcpy(name,"NIL")
+        strcpy(name,"NIL");
     }
     heapitem(int* p , char* i)
     {
@@ -39,11 +39,11 @@ public:
         {return &(index[0]);}
     heapitem* _alloc(userdefun f) //Allocates Statement
     {
-// @TODO MAKE THIS
+
     }
     heapitem* _alloc(atom a) //allocates user-defined variables, strings and arrays, and other really long atoms
     {
-// @TODO MAKE THIS
+// @TODO: Make This
     }
     heapitem* request() // Requests free memory space
     {
@@ -72,7 +72,7 @@ public:
                 strcpy(fp[top].argv[i],f.argv[i]);
         }
         else
-            cout<<"[ERROR]Stack Overflow[ERROR]"<<endl;
+            cerr<<"[ERROR]Stack Overflow[ERROR]"<<endl;
     }
     void pop(func f) // takes out the last element in the stack
     {
@@ -92,17 +92,17 @@ class atom
     char type;
     atomu val;
 public:
+    atom(){;}
     atom(atom x) // COPY CONSTRUCTOR -- yes, we need this
     {
         type = x.type;
         switch (tolower(x.type))
-        {
             case 'n':
                 val.num = x.val.num; break;
             case 'c':
-                val.ch = x.val.ch;
+                val.ch = x.val.ch;  break;
             case 'p':
-                val.ptr = x.val.ptr;
+                val.ptr = x.val.ptr; break;
         }
     }
     void settype(char t)
@@ -124,18 +124,32 @@ public:
         {
             case 'n':
             case 'N':
-                return val.num;
+                return val.num; break;  // CAUTION : CONVERT TO FLOAT
             case 'c':
             case 'C':
-                return val.ch;  // CAUTION: RETURNS CHARACTER AS NUMBER; NEEDS TO BE CONVERTED; SEE ABOVE
+                return val.ch; break; // CAUTION: RETURNS CHARACTER AS NUMBER; NEEDS TO BE CONVERTED; SEE ABOVE
             case 'p':
             case 'P':
-                return val.ptr;
-        default:
-            cerr<<"[ERROR]asked to return unknown type"<<t<<" [ERROR]"<<endl;
+                return val.ptr; break;
+//        default:
+//            cerr<<"[ERROR]asked to return unknown type"<<t<<" [ERROR]"<<endl;
         }
     }
-    // @TODO -add a set-value-function , checking the type and safely assigning both the `type` and `val` values
+    void setval(int v, int is_ptr) // explicitly convert to int b4 passing char to v.
+    {
+        if(is_ptr == 0)
+        {
+            if(v >= 48 && v <= 57) // use char for numbers too...
+                val.num = float(v - 48);
+            else
+                if(v >= 32 && v <= 127)
+                    val.ch = char(v);
+        }
+        else
+        {
+            val.ptr = v;
+        }
+    }
 };
 
 class func //Statement functions
@@ -146,11 +160,11 @@ protected:
 public:
     func()
     {name = "lambda";} // Keeps nameless functions as "lambda"
-    func(char n[], char* a[][]) // Constructor
+    func(char n[], atom a[]) // Constructor
     {
         strcpy(name,n);
-        for(int i = 0; i < 10 ; i++)
-            strcpy(argv[i],a);
+        for(int i = 0; i < 8 ; i++)
+            argv[i] = a[i];
     }
     func(func x) // Constructor
     {
@@ -160,12 +174,23 @@ public:
     }
     char* getname()
     {return name;}
+    atom arg(int index) // ONE-indexed , start from 1 , end with 8
+    {
+        if(index > 0 && index <=8)
+            return (index-1);
+    }
 };
 
 class userdefun:public func // User defined function class
 {
 protected:
     char* list;
+public:
+    userdefun(char* ptr) {list = ptr} // Will this work?
+    void setexec(char* ptr)
+    {
+        list = ptr;
+    }
 };
 
 void readinput(char fname[]) //Base input function
