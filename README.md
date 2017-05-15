@@ -3,9 +3,7 @@
 
 ## ++++ IMPORTANT CHANGES ++++ ##
 
-All SLang2 changes must now be merged into the slang2 branch. *** DO NOT *** merge the slang2 into master as the files will be deleted. Other branches can hold either editions to be merged. Please create new branches for individual SLang2 pushes, and use the original one to merge into master.
-
-The _dev_ branch is now a couple of major commits ahead of _master_. _Pull / clone_ to your local system from here, then push to your own branch. The heap system is incomplete , so you might wanna wait some time.
+ All SLang2 changes must now be merged into the _slang2_ branch. *** DO NOT *** merge the _slang2_ into _master_ as the files will be ***deleted***. Other branches can hold _either_ editions to be merged. Please create new branches for individual SLang2 pushes, and use the original one to merge into _master_.
 
 ### Contributing ###
 To add main features:
