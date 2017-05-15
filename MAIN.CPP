@@ -25,31 +25,64 @@ public:
         ptr = p;
         strcpy(name, i);
     }
-    addr() // Return pointer
+    void setid(char n[])
+    {
+        strcpy(name, n);
+    }
+    void setaddr(int* ad)
+    {
+        ptr = ad;
+    }
+    int* addr() // Return pointer
     {return ptr;}
-    id()  // Return identifier
+    char* id()  // Return identifier
     {return name;}
 };
 
 class heap // Virtual Heap -- Data store for everything
 {
-    heapitem index[32]; // Array of heapitem pointers. NOT pointer to heapitem array.
 public:
+    heapitem index[32]; // Array of heapitem pointers. NOT pointer to heapitem array.
     heapitem* baseaddr() //returns 0-address of heap index
         {return &(index[0]);}
-    heapitem* _alloc(userdefun f) //Allocates Statement
+    int _alloc(userdefun f) //Allocates Statement
     {
-
+        userdefun* _f = new userdefun(f); // 3 dereference levels for exec
+        (*_f).setexec(f.retlist());
+        int i = request();
+        index[i].setid(f.getname());
+        index[i].setaddr(_f);
+        return i;
     }
-    heapitem* _alloc(atom a) //allocates user-defined variables, strings and arrays, and other really long atoms
+    int _alloc(atom a, char n[]) //allocates user-defined variables.
     {
-// @TODO: Make This
+        atom* _var = new atom(a);
+//        (*_var).setval(a.value(), a.rtype()); // Is this how it's done? I'm not sure. not sure if `->` works.
+        int i = request();
+        index[i].setid(n);
+        index[i].setaddr(_var);
+        return i;
     }
-    heapitem* request() // Requests free memory space
+    char* _alloc(int&heapi) //returns string address to write in. `&heapi` is the integer to hold the heapaddress
+    {
+        char* _str = new str[32];
+        int i = request();
+        index[i].setid("NA");
+        index[i].setaddr(_str);
+        heapi = i;
+        return _str; // use this return value for local string variable to write through. works as array.
+    }
+    int request() // Requests free memory space
     {
         for(int i = 0; i < 32; i++)
-            if(strcmpi(index[i].retname(),"NIL"))
-                return (&(index[0]) + i);
+            if(!strcmpi(index[i].retname(),"NIL"))
+                return i;
+    }
+    int search(char idf[])
+    {
+        for(int i = 0 ; i < 32; i++)
+            if(!strcmpi(index[i].name,idf))
+                return i;
     }
 };
 
@@ -124,7 +157,7 @@ public:
         {
             case 'n':
             case 'N':
-                return val.num; break;  // CAUTION : CONVERT TO FLOAT
+                return val.num; break;
             case 'c':
             case 'C':
                 return val.ch; break; // CAUTION: RETURNS CHARACTER AS NUMBER; NEEDS TO BE CONVERTED; SEE ABOVE
@@ -135,20 +168,18 @@ public:
 //            cerr<<"[ERROR]asked to return unknown type"<<t<<" [ERROR]"<<endl;
         }
     }
-    void setval(int v, int is_ptr) // explicitly convert to int b4 passing char to v.
+    void setval(int v, char t) // explicitly convert to int b4 passing char to v.
     {
-        if(is_ptr == 0)
-        {
-            if(v >= 48 && v <= 57) // use char for numbers too...
-                val.num = float(v - 48);
-            else
-                if(v >= 32 && v <= 127)
-                    val.ch = char(v);
-        }
+        if(tolower(t) == 'c' )
+        { val.ch = char(v); settype(t);}
         else
-        {
-            val.ptr = v;
-        }
+            if(tolower(t) == 'n')
+                { val.num = v; settype(t);}
+            else
+                if(tolower(t) == 'p')
+                    { val.ptr = v; settype(t);}
+                else
+                    cerr<<"[ERROR] Request to set value of unknown type"<<t<<" [ERROR]";
     }
 };
 
@@ -187,6 +218,8 @@ protected:
     char* list;
 public:
     userdefun(char* ptr) {list = ptr} // Will this work?
+    char* retlist()
+    {return list;}
     void setexec(char* ptr)
     {
         list = ptr;
