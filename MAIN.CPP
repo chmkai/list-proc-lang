@@ -88,7 +88,7 @@ public:
 
 class stack //This is the call stack. It acts as a virtual stack machine.
 {
-    func fp[8]]; // function array
+    func fp[8]; // function array
     int top; // The level of meta we're at.
 public:
     stack()
@@ -231,6 +231,11 @@ void readinput(char fname[]) //Base input function
     ifstream fin(fname);
     char c;
     stack calls; //creates the call stack for all functions
+}
+
+atom parselist()
+{
+
 }
 /*
 char* parselist(stack &calls, ifstream &fin) // For parsing individual lists - recursively passes all of them
