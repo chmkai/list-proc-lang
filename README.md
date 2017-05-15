@@ -2,6 +2,7 @@
 ## -- NOTICE : APPROVED COLLABORATORS ONLY -- ##
 
 ## ++++ IMPORTANT CHANGES ++++ ##
+
  All SLang2 changes must now be merged into the _slang2_ branch. *** DO NOT *** merge the _slang2_ into _master_ as the files will be ***deleted***. Other branches can hold _either_ editions to be merged. Please create new branches for individual SLang2 pushes, and use the original one to merge into _master_.
 
 ### Contributing ###

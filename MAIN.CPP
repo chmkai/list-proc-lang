@@ -1,15 +1,14 @@
 #include <iostream.h>
 #include <conio.h>
 #include <fstream.h>
-#include <stdio.h>
+#include <strings.h>
 #include <stdio.h>
 
-
-union atomu
+union atomu // Atom data union for use in atom class
 {
-    float num;
+    int num;
     char ch;
-    int ptr;
+    int ptr; // integer added to heap.baseaddr() to get pointer to heapitem with pointer to unparsed string....woah, thi is getting meta...
 };
 
 /* PARSER RESOLVE -- KolkonutDev1
@@ -49,34 +48,79 @@ class heapitem
     int* ptr; // REAL pointer to stored object
     char name[10]; // Identifier for reserved keyword, function,or varaible; in that order
 public:
-    heapitem(int* p , char * i)
+    heapitem()
+    {
+        strcpy(name,"NIL");
+    }
+    heapitem(int* p , char* i)
     {
         ptr = p;
         strcpy(name, i);
     }
-    addr()
+    void setid(char n[])
+    {
+        strcpy(name, n);
+    }
+    void setaddr(int* ad)
+    {
+        ptr = ad;
+    }
+    int* addr() // Return pointer
     {return ptr;}
-    id()
-    {return name;} 
-}
 
-class heap // Virtual Heap
+    char* id()  // Return identifier
+    {return name;}
+};
+
+
+class heap // Virtual Heap -- Data store for everything
 {
-    heapitem* index[256]; // Array of heapitem pointers. NOT pointer to heapitem array.
 public:
-    baseaddr() //returns 0-address of heap index
+    heapitem index[32]; // Array of heapitem pointers. NOT pointer to heapitem array.
+    heapitem* baseaddr() //returns 0-address of heap index
         {return &(index[0]);}
-    falloc() //Allocates Statement
+    int _alloc(userdefun f) //Allocates Statement
     {
-
+        userdefun* _f = new userdefun(f); // 3 dereference levels for exec
+        (*_f).setexec(f.retlist());
+        int i = request();
+        index[i].setid(f.getname());
+        index[i].setaddr(_f);
+        return i;
     }
-    valloc() //allocates user-defined varaibles, strings and arrays, and other really long atoms
+    int _alloc(atom a, char n[]) //allocates user-defined variables.
     {
-
+        atom* _var = new atom(a);
+//        (*_var).setval(a.value(), a.rtype()); // Is this how it's done? I'm not sure. not sure if `->` works.
+        int i = request();
+        index[i].setid(n);
+        index[i].setaddr(_var);
+        return i;
     }
-}
+    char* _alloc(int&heapi) //returns string address to write in. `&heapi` is the integer to hold the heapaddress
+    {
+        char* _str = new str[32];
+        int i = request();
+        index[i].setid("NA");
+        index[i].setaddr(_str);
+        heapi = i;
+        return _str; // use this return value for local string variable to write through. works as array.
+    }
+    int request() // Requests free memory space
+    {
+        for(int i = 0; i < 32; i++)
+            if(!strcmpi(index[i].retname(),"NIL"))
+                return i;
+    }
+    int search(char idf[])
+    {
+        for(int i = 0 ; i < 32; i++)
+            if(!strcmpi(index[i].name,idf))
+                return i;
+    }
+};
 
-class stack //This is the call stack. It acts as a virtual stack machine..
+class stack //This is the call stack. It acts as a virtual stack machine.
 {
     func fp[8]]; // function array
     int top; // The level of meta we're at.
@@ -85,7 +129,7 @@ public:
     {
         top = -1; // UNLIMITED META
     }
-    push(func f) // Adds function to the top of the stack
+    void push(func f) // Adds function to the top of the stack
     {
         if(top!=7) // Limited Meta?
         {
@@ -95,18 +139,18 @@ public:
                 strcpy(fp[top].argv[i],f.argv[i]);
         }
         else
-            cout<<"[ERROR]Stack Overflow[ERROR]"<<endl;
+            cerr<<"[ERROR]Stack Overflow[ERROR]"<<endl;
     }
-    pop(func f) // takes out the last element in the stack
+    void pop(func f) // takes out the last element in the stack
     {
-        if(top!=-1) // More than technically physically limited meta!
+        if(top!=-1) // More than technically limited meta!
         {
             top-=1;
         }
         else
             cerr<<"[ERROR]Stack underflow[ERROR]"<<endl;
     }
-    top() // Returns to Ravenholm... We don't go there anymore....
+    int l() // Returns to Ravenholm... We don't go there anymore....
     {return top;}
 };
 
@@ -115,7 +159,20 @@ class atom
     char type;
     atomu val;
 public:
-    settype(char t)
+    atom(){;} // Do we need this?
+    atom(atom x) // COPY CONSTRUCTOR -- yes, we need this
+    {
+        type = x.type;
+        switch (tolower(x.type))
+            case 'n':
+                val.num = x.val.num; break;
+            case 'c':
+                val.ch = x.val.ch;  break;
+            case 'p':
+                val.ptr = x.val.ptr; break;
+        }
+    }
+    void settype(char t)
     {
         switch (t) {
             case 'n': case 'N':
@@ -134,36 +191,74 @@ public:
         {
             case 'n':
             case 'N':
-                return val.num;
+                return val.num; break;
             case 'c':
             case 'C':
-                return val.ch;  // CAUTION: RETURNS CHARACTER AS NUMBER; NEEDS TO BE CONVERTED; SEE ABOVE
+                return val.ch; break; // CAUTION: RETURNS CHARACTER AS NUMBER; NEEDS TO BE CONVERTED; SEE ABOVE
             case 'p':
             case 'P':
-                return val.ptr;
-        default:
-            cerr<<"[ERROR]asked to return unknown type"<<t<<" [ERROR]"<<endl;
+                return val.ptr; break;
+//        default:
+//            cerr<<"[ERROR]asked to return unknown type"<<t<<" [ERROR]"<<endl;
         }
     }
-
+    void setval(int v, char t) // explicitly convert to int b4 passing char to v.
+    {
+        if(tolower(t) == 'c' )
+        { val.ch = char(v); settype(t);}
+        else
+            if(tolower(t) == 'n')
+                { val.num = v; settype(t);}
+            else
+                if(tolower(t) == 'p')
+                    { val.ptr = v; settype(t);}
+                else
+                    cerr<<"[ERROR] Request to set value of unknown type"<<t<<" [ERROR]";
+    }
 };
 
 class func //Statement functions
 {
+protected:
     char name[10]; // Function identifier
-    char argv[8][8]; // argument vector using array of strings
+    atom argv[8]; // argument vector using array of strings
 public:
     func()
     {name = "lambda";} // Keeps nameless functions as "lambda"
-    func(char n[], char* a[][]) // Copy Constructor // Do we need this?
+    func(char n[], atom a[]) // Constructor
     {
         strcpy(name,n);
+        for(int i = 0; i < 8 ; i++)
+            argv[i] = a[i];
+    }
+    func(func x) // Constructor
+    {
+        strcpy(name,x.name);
         for(int i = 0; i < 10 ; i++)
-            strcpy(argv[i],a)
+            strcpy(argv[i],x.argv[i]);
     }
     char* getname()
     {return name;}
-}
+    atom arg(int index) // ONE-indexed , start from 1 , end with 8
+    {
+        if(index > 0 && index <=8)
+            return (index-1);
+    }
+};
+
+class userdefun:public func // User defined function class
+{
+protected:
+    char* list;
+public:
+    userdefun(char* ptr) {list = ptr} // Will this work?
+    char* retlist()
+    {return list;}
+    void setexec(char* ptr)
+    {
+        list = ptr;
+    }
+};
 
 void readinput(char fname[]) //Base input function
 {
@@ -214,7 +309,7 @@ char* parselist(stack &calls, ifstream &fin) // For parsing individual lists - r
 */ //Keep as ref , delete later
 
 void main
-{
+{   // @TODO :
     //Add some way to "include" function definition files?
     //These could contain function definitions created from basic ones
     //Decide if we are going to read directly from a text file
