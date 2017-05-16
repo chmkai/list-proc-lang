@@ -233,6 +233,16 @@ public:
     }
 };
 
+class squarelist //Things like this: [1 2 3 4]
+{
+    atom list[8];
+public:
+    void setarg(int i, atom a)
+    {list[i].set(a);}
+    void item(int i)
+    { return i;}
+}
+
 class func //Statement functions
 {
 protected:
@@ -289,6 +299,7 @@ char* genaddr(atom x)
     if(x.rtype = 'p')
         return (heap.index[x.value()]).addr();
 }
+
 
 
 atom parsechar() // Parses character -- Does not need to have another quote after
@@ -367,9 +378,64 @@ void readinput() //Base input function
     NRTRN.set(parseblock()); // ASSUMES FIRST CHARACTER IS '{'
 }
 
-atom eval()
+atom eval(func f)
 {
-
+    if(!strcmpi(f.getname(), "+")) // Thanks, KolkonutDev1 !
+    {
+        int sum=0;
+        for (int i=1,i<9;i++)
+        if((f.arg(i)).rtype() == 'n')
+            sum+=f.arg(i);
+        atom x;
+        x.setval(sum,'n');
+        return x;
+    }
+    else if(!strcmpi(f.getname(), "-")) // Thanks, KolkonutDev1 !
+    {
+        int sum=0;
+        for (int i=2,i<9;i++)
+        if((f.arg(i)).rtype() == 'n')
+            sum+=f.arg(i);
+        atom x;
+        x.setval(arg[1]-sum,'n');
+        return x;
+    }
+    else if(!strcmpi(f.getname(), "*")) //Thanks, KolkonutDev1 !
+    {
+        int prod=1;
+        for (int i=1,i<9;i++)
+        if((f.arg(i)).rtype() == 'n')
+            prod*=f.arg(i);
+        atom x;
+        x.setval(prod,'n');
+        return x;
+    }
+    else if(!strcmpi(f.getname(), "/")) //Thanks, KolkonutDev1 !
+    {
+        int quo=0;
+        if((f.arg(1)).rtype() == 'n'&&(f.arg(2)).rtype() == 'n')
+            quo=f.arg(1)/f.arg(2);
+        atom x;
+        x.setval(sum,'n');
+        return x;
+    }
+    else if(!strcmpi(f.getname(), "%")) //Thanks, KolkonutDev1 !
+    {
+        int quo=0;
+        if((f.arg(1)).rtype() == 'n'&&(f.arg(2)).rtype() == 'n')
+        quo=f.arg(1)%f.arg(2);
+        atom x;
+        x.setval(sum,'n');
+        return x;
+    }
+    else if(!strcmpi( f.getname() , "echo"))
+    {
+        for(int i = 1 ; i < 9 ; i++)
+                if((f.arg(i)).rtype()  == 'p')
+                      cout<< (heap.index[(f.arg(i)).value()]).addr();
+// NOT A TYPO .DO NOT DEREFERENCE  (put *) HERE AS `cout`ING ADDRESS SHOULD PRINT THE WHOLE THING
+        cout<<endl;
+    }
 }
 
 atom parselist(char context = 'f', int tc = 0) // context being 'f' means file , 'm' means in memory
@@ -446,7 +512,7 @@ atom parselist(char context = 'f', int tc = 0) // context being 'f' means file ,
         }
         tc++;
     }while(token!=')');
-    retom.set(/* eval() called here */);
+    retom.set(eval(list));
 }
 
 /*
