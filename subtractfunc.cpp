@@ -1,8 +1,10 @@
 atom subtract(func f)
 {
-  int diff=0;
-  diff=f.arg[1]-f.arg[2];
+  int sum=0;
+  for (int i=2,i<9;i++)
+    if((f.arg(i)).rtype() == 'n')
+      sum+=f.arg[i];
   atom x;
-  x.setval(diff,'n');
+  x.setval(arg[1]-sum,'n');
   return x;
 }
