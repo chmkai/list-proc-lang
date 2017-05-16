@@ -1,7 +1,9 @@
 atom add(func f)
 {
-  atom sum=0;
+  int sum=0;
   for (int i=0,i<8;i++)
     sum+=f.arg[i];
-  return sum;
+  atom x;
+  x.setval(sum,'n');
+  return x;
 }
