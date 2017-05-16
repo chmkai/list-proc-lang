@@ -2,6 +2,6 @@ add  ----------- add all 8 atoms
 sbct ----------- subtract second atom from first
 prod ----------- multiply all 8 atoms
 div ------------ divide first atom by second
-prnt ----------- print first atom.If enclosed in quotes
-newv ----------- make a new variable, type int by default, assigns the value of second atom to it, defaults to 0
+show ----------- print first atom.If enclosed in quotes
+var ----------- make a new variable, type int by default, assigns the value of second atom to it, defaults to 0
 inpv ----------- assigns the value of the second atom to the variable name in the first atom 
