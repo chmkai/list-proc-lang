@@ -1,17 +1,169 @@
 #include <iostream.h>
+#include <stdlib.h>
 #include <conio.h>
+#include <ctype.h>
 #include <fstream.h>
-#include <strings.h>
+#include <string.h>
 #include <stdio.h>
 
-ifstream FILE("src.txt");
+//Declarations:
+class atom;
+class func;
+class userdefun;
+class heapitem;
+class Heap;
+class stack;
+
+
+ifstream File("src.txt");
 
 union atomu // Atom data union for use in atom class
 {
-    int num;
-    char ch;
-    int ptr; // integer added to heap.baseaddr() to get pointer to heapitem with pointer to unparsed string....woah, thi is getting meta...
+	int num;
+	char ch;
+	int ptr; // integer added to heap.baseaddr() to get pointer to heapitem with pointer to unparsed string....woah, thi is getting meta...
 };
+
+
+class atom
+{
+    char type;
+    atomu val;
+public:
+    atom(){;} // Do we need this?
+    atom(atom &x) // COPY CONSTRUCTOR -- yes, we need this
+    {
+        type = x.rtype();
+        switch (tolower(x.rtype()))
+        {
+            case 'n':
+                x.setval(x.value(), 'n'); break;
+            case 'c':
+                x.setval(char(x.value()), 'c');  break;
+            case 'p':
+                x.setval(x.value(), 'p'); break;
+        }
+    }
+    void set(atom x)
+    {
+        type = x.type;
+        switch (tolower(x.type))
+        {
+            case 'n':
+                val.num = x.val.num; break;
+            case 'c':
+                val.ch = x.val.ch;  break;
+            case 'p':
+                val.ptr = x.val.ptr; break;
+        }
+    }
+    void settype(char t)
+    {
+        switch (t) {
+            case 'n': case 'N':
+            case 'c': case 'C':
+            case 'p': case 'P':
+                type = t; break;
+        default:
+            cerr<<"[ERROR]Atom conversion -- unknown type"<<t<<" [ERROR]"<<endl;
+        }
+    }
+    char rtype() //returns type
+    {return type;}
+    int value() // CAUTION : USES INT RETURN, SEE BELOW
+    {
+        switch(type)
+        {
+            case 'n':
+            case 'N':
+                return val.num; break;
+            case 'c':
+            case 'C':
+                return val.ch; break; // CAUTION: RETURNS CHARACTER AS NUMBER; NEEDS TO BE CONVERTED; SEE ABOVE
+            case 'p':
+            case 'P':
+                return val.ptr; break;
+//        default:
+//            cerr<<"[ERROR]asked to return unknown type"<<t<<" [ERROR]"<<endl;
+        }
+    }
+    void setval(int v, char t) // explicitly convert to int b4 passing char to v.
+    {
+        if(tolower(t) == 'c' )
+        { val.ch = char(v); settype(t);}
+        else
+            if(tolower(t) == 'n')
+                { val.num = v; settype(t);}
+            else
+                if(tolower(t) == 'p')
+                    { val.ptr = v; settype(t);}
+                else
+                    cerr<<"[ERROR] Request to set value of unknown type"<<t<<" [ERROR]";
+    }
+};
+
+class squarelist
+{
+    atom list[8];
+public:
+    void setarg(int i, atom a)
+    {list[i].set(a);}
+    atom item(int i)
+    {return list[i];}
+}
+
+class func //Statement functions
+{
+protected:
+    char name[10]; // Function identifier
+    atom argv[8]; // argument vector using array of strings
+public:
+    func()
+    {strcpy(name, "lambda");} // Keeps nameless functions as "lambda"
+    func(char n[], atom a[]) // Constructor
+    {
+        strcpy(name,n);
+        for(int i = 0; i < 8 ; i++)
+            arg(i).setval(a[i].value() , a[i].rtype());
+    }
+    func(func &x) // Constructor
+    {
+        strcpy(name,x.name);
+        for(int i = 1; i < 9 ; i++)
+            arg(i).setval(x.arg(i).value() , x.arg(i).rtype());
+    }
+    char* getname()
+    {return name;}
+    atom arg(int index) // ONE-indexed , start from 1 , end with 8
+    {
+        if(index > 0 && index <=8)
+            return (index-1);
+    }
+    void setname(char n[])
+    {
+        strcpy(name, n);
+    }
+    void setarg(int n, atom x)
+    {
+        (argv[n-1]).set(x);
+    }
+};
+
+class userdefun:public func // User defined function class
+{
+protected:
+    char* list;
+public:
+	 userdefun() {;} // Does this even work?
+    userdefun(char* ptr) {list = ptr;} // Will this work?
+    char* retlist()
+    {return list;}
+    void setexec(char* ptr) //set pointer to string being used as list to parse
+    {
+        list = ptr;
+    }
+};
+
 
 /* PARSER RESOLVE -- KolkonutDev1
 class func
@@ -75,15 +227,15 @@ public:
 };
 
 
-class Heap // Virtual Heap -- Data store for everything
+class Heap
 {
 public:
-    heapitem index[32]; // Array of heapitem pointers. NOT pointer to heapitem array.
+    heapitem index[32];
     heapitem* baseaddr() //returns 0-address of heap index
         {return &(index[0]);}
     int _alloc(userdefun f) //Allocates Statement
     {
-        userdefun* _f = new userdefun(f); // 3 dereference levels for exec
+        userdefun* _f = new userdefun(f);
         (*_f).setexec(f.retlist());
         int i = request();
         index[i].setid(f.getname());
@@ -93,15 +245,15 @@ public:
     int _alloc(atom a, char n[]) //allocates user-defined variables.
     {
         atom* _var = new atom(a);
-//        (*_var).setval(a.value(), a.rtype()); // Is this how it's done? I'm not sure. not sure if `->` works.
+//        (*_var).setval(a.value(), a.rtype());
         int i = request();
         index[i].setid(n);
-        index[i].setaddr(_var);
+        index[i].setaddr((int *)&_var);
         return i;
     }
     char* _alloc(int&heapi, int sz = 32) //returns string address to write in. `&heapi` is the integer to hold the heapaddress
     {
-        char* _str = new str[sz];
+        char* _str = new char[sz];
         int i = request();
         index[i].setid("NA");
         index[i].setaddr(_str);
@@ -111,188 +263,51 @@ public:
     int request() // Requests free memory space
     {
         for(int i = 0; i < 32; i++)
-            if(!strcmpi(index[i].retname(),"NIL"))
+            if(!strcmpi(index[i].id(),"NIL"))
                 return i;
     }
     int search(char idf[])
     {
         for(int i = 0 ; i < 32; i++)
-            if(!strcmpi(index[i].name,idf))
+            if(!strcmpi(index[i].id(),idf))
                 return i;
     }
-} heap;
+} heap;    // THIS DOES NOT WORK BUT IT WORKS
 
-class stack //This is the call stack. It acts as a virtual stack machine.
+class stack
 {
-    func fp[8]; // function array
-    int top; // The level of meta we're at.
+    func fp[8]; // list array
+    int top;
 public:
 //    int fptr; // FILE POINTER VARIABLE
     stack()
     {
-        top = -1; // UNLIMITED META
+        top = -1;
     }
     void push(func f) // Adds function to the top of the stack
     {
-        if(top!=7) // Limited Meta?
+        if(top!=7)
         {
             top+=1;
             strcpy(fp[top].name,f.name);
             for(int i = 0; i < 8; i++)
-                strcpy(fp[top].argv[i],f.argv[i]);
+                fp[top].arg(i+1).setval(f.arg(i+1).value() , f.arg(i+1).rtype());
         }
         else
             cerr<<"[ERROR]Stack Overflow[ERROR]"<<endl;
     }
     void pop(func f) // takes out the last element in the stack
     {
-        if(top!=-1) // More than technically limited meta!
+        if(top!=-1)
         {
             top-=1;
         }
         else
             cerr<<"[ERROR]Stack underflow[ERROR]"<<endl;
     }
-    int l() // Returns to Ravenholm... We don't go there anymore....
+    int l()
     {return top;}
 } calls;
-
-class atom
-{
-    char type;
-    atomu val;
-public:
-    atom(){;} // Do we need this?
-    atom(atom x) // COPY CONSTRUCTOR -- yes, we need this
-    {
-        type = x.type;
-        switch (tolower(x.type))
-            case 'n':
-                val.num = x.val.num; break;
-            case 'c':
-                val.ch = x.val.ch;  break;
-            case 'p':
-                val.ptr = x.val.ptr; break;
-        }
-    }
-    void set(atom x)
-    {
-        type = x.type;
-        switch (tolower(x.type))
-        {
-            case 'n':
-                val.num = x.val.num; break;
-            case 'c':
-                val.ch = x.val.ch;  break;
-            case 'p':
-                val.ptr = x.val.ptr; break;
-        }
-    }
-    void settype(char t)
-    {
-        switch (t) {
-            case 'n': case 'N':
-            case 'c': case 'C':
-            case 'p': case 'P':
-                val.type = t; break;
-        default:
-            cerr<<"[ERROR]Atom conversion -- unknown type"<<t<<" [ERROR]"<<endl;
-        }
-    }
-    char rtype() //returns type
-    {return type;}
-    int value() // CAUTION : USES INT RETURN, SEE BELOW
-    {
-        switch(type)
-        {
-            case 'n':
-            case 'N':
-                return val.num; break;
-            case 'c':
-            case 'C':
-                return val.ch; break; // CAUTION: RETURNS CHARACTER AS NUMBER; NEEDS TO BE CONVERTED; SEE ABOVE
-            case 'p':
-            case 'P':
-                return val.ptr; break;
-//        default:
-//            cerr<<"[ERROR]asked to return unknown type"<<t<<" [ERROR]"<<endl;
-        }
-    }
-    void setval(int v, char t) // explicitly convert to int b4 passing char to v.
-    {
-        if(tolower(t) == 'c' )
-        { val.ch = char(v); settype(t);}
-        else
-            if(tolower(t) == 'n')
-                { val.num = v; settype(t);}
-            else
-                if(tolower(t) == 'p')
-                    { val.ptr = v; settype(t);}
-                else
-                    cerr<<"[ERROR] Request to set value of unknown type"<<t<<" [ERROR]";
-    }
-};
-
-class squarelist //Things like this: [1 2 3 4]
-{
-    atom list[8];
-public:
-    void setarg(int i, atom a)
-    {list[i].set(a);}
-    void item(int i)
-    { return i;}
-}
-
-class func //Statement functions
-{
-protected:
-    char name[10]; // Function identifier
-    atom argv[8]; // argument vector using array of strings
-public:
-    func()
-    {name = "lambda";} // Keeps nameless functions as "lambda"
-    func(char n[], atom a[]) // Constructor
-    {
-        strcpy(name,n);
-        for(int i = 0; i < 8 ; i++)
-            argv[i] = a[i];
-    }
-    func(func x) // Constructor
-    {
-        strcpy(name,x.name);
-        for(int i = 0; i < 10 ; i++)
-            strcpy(argv[i],x.argv[i]);
-    }
-    char* getname()
-    {return name;}
-    atom arg(int index) // ONE-indexed , start from 1 , end with 8
-    {
-        if(index > 0 && index <=8)
-            return (index-1);
-    }
-    void setname(char n[])
-    {
-        strcpy(name, n);
-    }
-    void setarg(int n, atom x)
-    {
-        (f.arg[n-1]).set(x);
-    }
-};
-
-class userdefun:public func // User defined function class
-{
-protected:
-    char* list;
-public:
-    userdefun(char* ptr) {list = ptr} // Will this work?
-    char* retlist()
-    {return list;}
-    void setexec(char* ptr) //set pointer to string being used as list to parse
-    {
-        list = ptr;
-    }
-};
 
 char* genaddr(atom x)
 {
@@ -300,12 +315,10 @@ char* genaddr(atom x)
         return (heap.index[x.value()]).addr();
 }
 
-
-
-atom parsechar() // Parses character -- Does not need to have another quote after
+atom parsechar() // Parses single character
 {
     char c;
-    FILE.get(c);
+    File.get(c);
     atom x;
     x.setval(int(c), 'c');
     return x;
@@ -317,19 +330,19 @@ atom parsequotes(char context = 'f') //Parses strings and passes back a ptr-atom
     char c;
     int space = 0;
     char* sptr = heap._alloc(heapi);
-    FILE.get(c);
+    File.get(c);
     while(c != '\"')
     {
         sptr[space] = c;
         space++;
-        FILE.get(c);
+        File.get(c);
     }
     atom x;
-    atom.set(heapi, 'p');
+    x.setval(heapi, 'p');
     return x;
 }
 
-atom parsequotes(char context = 'm',char* s_address)
+atom parsequotes(char context ,char* s_address)
 {
     int heapi;
     char c;
@@ -342,7 +355,7 @@ atom parsequotes(char context = 'm',char* s_address)
         space++;
     }while(s_address[space+1] != '\"');
     atom x;
-    atom.set(heapi, 'p');
+    x.setval(heapi, 'p');
     return x;
 }
 
@@ -352,7 +365,7 @@ atom parseblock()
 {
     char c;
     atom retom;
-    FILE.get(c);
+    File.get(c);
     while(c != '}')
     {
         switch(c)
@@ -364,7 +377,7 @@ atom parseblock()
                 retom.set(parseblock());
                 break;
             case '\"':
-                retom set(parsequotes());
+                retom.set(parsequotes());
                 break;
         }
     }
@@ -373,7 +386,7 @@ atom parseblock()
 void readinput() //Base input function
 {
     char c;
-    FILE.get(c);
+    File.get(c);
     atom NRTRN;
     NRTRN.set(parseblock()); // ASSUMES FIRST CHARACTER IS '{'
 }
@@ -383,9 +396,9 @@ atom eval(func f)
     if(!strcmpi(f.getname(), "+")) // Thanks, KolkonutDev1 !
     {
         int sum=0;
-        for (int i=1,i<9;i++)
-        if((f.arg(i)).rtype() == 'n')
-            sum+=f.arg(i);
+        for (int i=1;i<9;i++)
+        	if((f.arg(i)).rtype() == 'n')
+            sum+=f.arg(i).value();
         atom x;
         x.setval(sum,'n');
         return x;
@@ -393,17 +406,17 @@ atom eval(func f)
     else if(!strcmpi(f.getname(), "-")) // Thanks, KolkonutDev1 !
     {
         int sum=0;
-        for (int i=2,i<9;i++)
-        if((f.arg(i)).rtype() == 'n')
-            sum+=f.arg(i);
-        atom x;
-        x.setval(arg[1]-sum,'n');
+        for (int i=2;i<9;i++)
+        	if((f.arg(i)).rtype() == 'n')
+            sum+=f.arg(i).value();
+        	atom x;
+        	x.setval(f.arg(1).value()-sum,'n');
         return x;
     }
     else if(!strcmpi(f.getname(), "*")) //Thanks, KolkonutDev1 !
     {
         int prod=1;
-        for (int i=1,i<9;i++)
+        for (int i=1;i<9;i++)
         if((f.arg(i)).rtype() == 'n')
             prod*=f.arg(i);
         atom x;
@@ -416,7 +429,7 @@ atom eval(func f)
         if((f.arg(1)).rtype() == 'n'&&(f.arg(2)).rtype() == 'n')
             quo=f.arg(1)/f.arg(2);
         atom x;
-        x.setval(sum,'n');
+        x.setval(quo,'n');
         return x;
     }
     else if(!strcmpi(f.getname(), "%")) //Thanks, KolkonutDev1 !
@@ -425,7 +438,7 @@ atom eval(func f)
         if((f.arg(1)).rtype() == 'n'&&(f.arg(2)).rtype() == 'n')
         quo=f.arg(1)%f.arg(2);
         atom x;
-        x.setval(sum,'n');
+        x.setval(quo,'n');
         return x;
     }
     else if(!strcmpi( f.getname() , "echo"))
@@ -454,7 +467,7 @@ atom parselist(char context = 'f', int tc = 0) // context being 'f' means file ,
         switch(context)
         {
             case 'f':
-                FILE.get(c);
+                File.get(c);
                 break;
             case 'm':
                 break;
@@ -464,16 +477,15 @@ atom parselist(char context = 'f', int tc = 0) // context being 'f' means file ,
         switch(token)
         {
             case '(':
-                retom.set(parselist(context, tc)); // HOLY META-RECUR-WHAT?
-                list.setarg(c_arg, temp;)
+                list.setarg(c_arg, temp);
                 wc = 0;
                 c_arg++;
                 break;
             case ')':
                 break;
             case '\'':
-                atom temp(parsechar()); //constructor through parsechar() -- will it work?
-                list.setarg(c_arg, temp;)
+                atom temp(parsechar());
+                list.setarg(c_arg, temp);
                 wc = 0;
                 c_arg++;
                 break;
@@ -515,27 +527,7 @@ atom parselist(char context = 'f', int tc = 0) // context being 'f' means file ,
     retom.set(eval(list));
 }
 
-/*
-char* parselist(stack &calls, ifstream &fin) // For parsing individual lists - recursively passes all of them
-{
-   char token[8]; //Hold token for parsing
 
-    while(fin.get(a))  // eval() somewhere inside here
-    {
-        if(a == '(')
-        {
-            calls.push(f)
-            token = parselist(calls , fin); //Meta
-        }
-        if(a == ')')
-        {
-            return token;
-
-        }
-    }
-
-}
-*/
 /* KolkonutDev1 RESOLVE
   cout<<"Enter "end" when the code is finished.";
   cout<<endl<<endl;
@@ -559,12 +551,5 @@ char* parselist(stack &calls, ifstream &fin) // For parsing individual lists - r
 
 void main
 {
-     // @TODO :
-    //Add some way to "include" function definition files?
-    //These could contain function definitions created from basic ones
-    //Decide if we are going to read directly from a text file
-    //If so, how are we going to ignore all whitespace? Figure that out
-    //Also, DONT TOUCH THE MAIN JUST YET.
-    //Also, decide if we are going to need a menu.
-    FILE.close();
+    File.close();
 }
