@@ -27,87 +27,91 @@ union atomu // Atom data union for use in atom class
 
 class atom
 {
-    char type;
-    atomu val;
+	char type;
+	atomu val;
 public:
-    atom(){;} // Do we need this?
-    atom(atom &x) // COPY CONSTRUCTOR -- yes, we need this
-    {
+	atom() // NOW we need this
+	{
+		type = 'x'; // Unknown type
+	}
+	atom(atom &x) // COPY CONSTRUCTOR -- yes, we need this
+	{
 		type = x.rtype();
 		switch (tolower(x.rtype()))
 		{
 			case 'n':
-				x.setval(x.value(), 'n'); break;
+				setval(x.value(), 'n'); break;
 			case 'c':
-                x.setval(char(x.value()), 'c');  break;
-            case 'p':
-                x.setval(x.value(), 'p'); break;
-        }
-    }
-    void set(atom x)
-    {
-        type = x.type;
-		switch (tolower(x.type))
-        {
-            case 'n':
-                val.num = x.val.num; break;
-            case 'c':
-                val.ch = x.val.ch;  break;
-            case 'p':
-                val.ptr = x.val.ptr; break;
-        }
-    }
-    void settype(char t)
-    {
+				setval(char(x.value()), 'c');  break;
+			case 'p':
+				setval(x.value(), 'p'); break;
+		}
+	}
+	void set(atom x)
+	{
+		type = x.type;
+		switch (tolower(x.rtype()))
+		{
+			case 'n':
+				val.num = x.value(); break;
+			case 'c':
+				val.ch = x.value();  break;
+			case 'p':
+				val.ptr = x.value(); break;
+		}
+	}
+	void settype(char t)
+	{
 		switch (t) {
-            case 'n': case 'N':
-            case 'c': case 'C':
-            case 'p': case 'P':
-                type = t; break;
-        default:
-            cerr<<"[ERROR]Atom conversion -- unknown type"<<t<<" [ERROR]"<<endl;
-        }
-    }
-    char rtype() //returns type
-    {return type;}
-    int value() // CAUTION : USES INT RETURN, SEE BELOW
-    {
+			case 'n': case 'N':
+			case 'c': case 'C':
+			case 'p': case 'P':
+				type = t; break;
+		default:
+			cerr<<"[ERROR]Atom conversion -- unknown type"<<t<<" [ERROR]"<<endl;
+		}
+	}
+	char rtype() //returns type
+	{return type;}
+	int value() // CAUTION : USES INT RETURN, SEE BELOW
+	{   if(type == 'x')
+			cerr<<"[ERROR] atom of unknown type [ERROR]";
 		switch(type)
-        {
-            case 'n':
-            case 'N':
+		{
+			case 'n':
+			case 'N':
 				return val.num; break;
-            case 'c':
-            case 'C':
+			case 'c':
+			case 'C':
 				return val.ch; break; // CAUTION: RETURNS CHARACTER AS NUMBER; NEEDS TO BE CONVERTED; SEE ABOVE
-            case 'p':
-            case 'P':
+			case 'p':
+			case 'P':
 				return val.ptr; break;
 //        default:
 //            cerr<<"[ERROR]asked to return unknown type"<<t<<" [ERROR]"<<endl;
-        }
+		}
 	}
-    void setval(int v, char t) // explicitly convert to int b4 passing char to v.
-    {
-        if(tolower(t) == 'c' )
-        { val.ch = char(v); settype(t);}
-        else
-            if(tolower(t) == 'n')
-                { val.num = v; settype(t);}
-            else
-                if(tolower(t) == 'p')
-                    { val.ptr = v; settype(t);}
-                else
-                    cerr<<"[ERROR] Request to set value of unknown type"<<t<<" [ERROR]";
-    }
+	void setval(int v, char t) // explicitly convert to int b4 passing char to v.
+	{
+		if(tolower(t) == 'c' )
+		{ val.ch = char(v); settype(t);}
+		else
+			if(tolower(t) == 'n')
+				{ val.num = v; settype(t);}
+			else
+				if(tolower(t) == 'p')
+					{ val.ptr = v; settype(t);}
+				else
+					cerr<<"[ERROR] Request to set value of unknown type"<<t<<" [ERROR]";
+	}
 };
 
 class squarelist
 {
-    atom list[8];
+	atom list[8];
 public:
-    void setarg(int i, atom a)
-    {list[i].set(a);}
+	void setarg(int i, atom a)
+	{list[i].set(a);}
 	atom item(int i)
 	{return list[i];}
 };
@@ -296,7 +300,7 @@ public:
 		else
 			cerr<<"[ERROR]Stack Overflow[ERROR]"<<endl;
 	}
-	void pop(func f) // takes out the last element in the stack
+	void pop() // takes out the last element in the stack
 	{
 		if(top!=-1)
 		{
@@ -341,8 +345,8 @@ atom parsequotes(char context = 'f') //Parses strings and passes back a ptr-atom
 	x.setval(heapi, 'p');
 	return x;
 }
-
-atom parsequotes(char context ,char* s_address)
+/*
+atom parsequotes(char* s_address, char context = 'f')
 {
 	int heapi;
 	char c;
@@ -358,7 +362,7 @@ atom parsequotes(char context ,char* s_address)
 	x.setval(heapi, 'p');
 	return x;
 }
-
+*/
 atom parselist(char context = 'f', int tc = 0); // prototype
 
 atom parseblock()
@@ -371,15 +375,16 @@ atom parseblock()
 		switch(c)
 		{
 			case '(':
-				retom.set(parselist());
+				retom.set(parselist('f' , 0));
 				break;
 			case '{':
 				retom.set(parseblock());
 				break;
 			case '\"':
-				retom.set(parsequotes());
+				retom.set(parsequotes('f'));
 				break;
 		}
+		File.get(c);
 	}
 }
 
@@ -398,7 +403,7 @@ atom eval(func f)
 		int sum=0;
 		for (int i=1;i<9;i++)
 			if((f.arg(i)).rtype() == 'n')
-			sum+=f.arg(i).value();
+				sum+=f.arg(i).value();
 		atom x;
 		x.setval(sum,'n');
 		return x;
@@ -435,7 +440,7 @@ atom eval(func f)
 	else if(!strcmpi(f.getname(), "%")) //Thanks, KolkonutDev1 !
 	{
 		int quo=0;
-		if((f.arg(1)).rtype() == 'n'&&(f.arg(2)).rtype() == 'n')
+		if((f.arg(1)).rtype() == 'n' && (f.arg(2)).rtype() == 'n')
 		quo=f.arg(1).value()%f.arg(2).value();
 		atom x;
 		x.setval(quo,'n');
@@ -446,6 +451,9 @@ atom eval(func f)
 		for(int i = 1 ; i < 9 ; i++)
 				if((f.arg(i)).rtype()  == 'p')
 					  cout<< (heap.index[(f.arg(i)).value()]).addr();
+				else
+					if((f.arg(i)).rtype() != 'x')
+						cout<< f.arg(i).value();
 // NOT A TYPO .DO NOT DEREFERENCE  (put *) HERE AS `cout`ING ADDRESS SHOULD PRINT THE WHOLE THING
 		cout<<endl;
 	}
@@ -466,17 +474,21 @@ atom parselist(char context, int tc) // context being 'f' means file , 'm' means
 		switch(context)
 		{
 			case 'f':
-				File.get(c);
+				if(!File.eof())
+					File.get(c);
+				cout<<"f";
 				break;
 			case 'm':
+				cout<<"m";
 				break;
 		default:
-				cerr<<"[ERROR]Unknown context[ERROR]";
+			  //	cerr<<"[ERROR]Unknown context[ERROR]";
+			  cerr<<"u";
 		}
 		switch(c)
 		{
 			case '(':
-				atom temp1(parsequotes(context));
+				atom temp1(parselist(context));
 				list.setarg(c_arg, temp1);
 				wc = 0;
 				c_arg++;
@@ -501,6 +513,8 @@ atom parselist(char context, int tc) // context being 'f' means file , 'm' means
 				wc = 0;
 				c_arg++;
 				break;
+			case '\n':
+			case '\t':
 			case 32:
 				if(wc > 0)
 				{
@@ -509,9 +523,9 @@ atom parselist(char context, int tc) // context being 'f' means file , 'm' means
 						int heapi;
 						char* stp = heap._alloc(heapi, 8);
 						strcpy(stp, token);
-						atom temp; // temporary atom to hold value b4 passing into list
-						temp.setval(heapi, 'p');
-						list.setarg(c_arg,temp);
+						atom temp5; // temporary atom to hold value b4 passing into list
+						temp5.setval(heapi, 'p');
+						list.setarg(c_arg,temp5);
 					}
 					else
 					if(c_arg == 0)
@@ -529,6 +543,8 @@ atom parselist(char context, int tc) // context being 'f' means file , 'm' means
 		tc++;
 	}while(c!=')');
 	retom.set(eval(list));
+	calls.pop();
+	return retom;
 }
 
 
@@ -555,5 +571,10 @@ atom parselist(char context, int tc) // context being 'f' means file , 'm' means
 
 void main()
 {
+	clrscr();
+	cout<<getch();
+	atom test(parselist('f', 0));
+	cout<<test.value();
+	getch();
 	File.close();
 }
