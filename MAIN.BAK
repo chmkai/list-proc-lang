@@ -33,12 +33,12 @@ public:
     atom(){;} // Do we need this?
     atom(atom &x) // COPY CONSTRUCTOR -- yes, we need this
     {
-		type = x.rtype();
+        type = x.rtype();
 		switch (tolower(x.rtype()))
-		{
-			case 'n':
-				x.setval(x.value(), 'n'); break;
-			case 'c':
+        {
+            case 'n':
+                x.setval(x.value(), 'n'); break;
+            case 'c':
                 x.setval(char(x.value()), 'c');  break;
             case 'p':
                 x.setval(x.value(), 'p'); break;
@@ -76,17 +76,17 @@ public:
         {
             case 'n':
             case 'N':
-				return val.num; break;
+                return val.num; break;
             case 'c':
             case 'C':
-				return val.ch; break; // CAUTION: RETURNS CHARACTER AS NUMBER; NEEDS TO BE CONVERTED; SEE ABOVE
+                return val.ch; break; // CAUTION: RETURNS CHARACTER AS NUMBER; NEEDS TO BE CONVERTED; SEE ABOVE
             case 'p':
             case 'P':
-				return val.ptr; break;
+                return val.ptr; break;
 //        default:
 //            cerr<<"[ERROR]asked to return unknown type"<<t<<" [ERROR]"<<endl;
         }
-	}
+    }
     void setval(int v, char t) // explicitly convert to int b4 passing char to v.
     {
         if(tolower(t) == 'c' )
@@ -108,21 +108,21 @@ class squarelist
 public:
     void setarg(int i, atom a)
     {list[i].set(a);}
-	atom item(int i)
-	{return list[i];}
-};
+    atom item(int i)
+    {return list[i];}
+}
 
 class func //Statement functions
 {
 protected:
-	char name[10]; // Function identifier
-	atom argv[8]; // argument vector using array of strings
+    char name[10]; // Function identifier
+    atom argv[8]; // argument vector using array of strings
 public:
-	func()
-	{strcpy(name, "lambda");} // Keeps nameless functions as "lambda"
-	func(char n[], atom a[]) // Constructor
-	{
-		strcpy(name,n);
+    func()
+    {strcpy(name, "lambda");} // Keeps nameless functions as "lambda"
+    func(char n[], atom a[]) // Constructor
+    {
+        strcpy(name,n);
 		for(int i = 0; i < 8 ; i++)
 			arg(i).setval(a[i].value() , a[i].rtype());
 	}
@@ -139,29 +139,29 @@ public:
 		if(index > 0 && index <=8)
 			return argv[index-1];
 	}
-	void setname(char n[])
-	{
-		strcpy(name, n);
-	}
-	void setarg(int n, atom x)
-	{
-		(argv[n-1]).set(x);
-	}
+    void setname(char n[])
+    {
+        strcpy(name, n);
+    }
+    void setarg(int n, atom x)
+    {
+        (argv[n-1]).set(x);
+    }
 };
 
 class userdefun:public func // User defined function class
 {
 protected:
-	char* list;
+    char* list;
 public:
 	 userdefun() {;} // Does this even work?
-	userdefun(char* ptr) {list = ptr;} // Will this work?
-	char* retlist()
-	{return list;}
-	void setexec(char* ptr) //set pointer to string being used as list to parse
-	{
-		list = ptr;
-	}
+    userdefun(char* ptr) {list = ptr;} // Will this work?
+    char* retlist()
+    {return list;}
+    void setexec(char* ptr) //set pointer to string being used as list to parse
+    {
+        list = ptr;
+    }
 };
 
 
@@ -180,14 +180,14 @@ void parselist()
 
   while(fin>>atom)
   {
-	if(atom[0]=='(')
-	  x+=1;
-	if(atom[strlen(atom)]==')')
-	  x-=1;
+    if(atom[0]=='(')
+      x+=1;
+    if(atom[strlen(atom)]==')')
+      x-=1;
 
-	if(x!=0)
-	  strcpy(argv[i],atom);
-	i++;
+    if(x!=0)
+      strcpy(argv[i],atom);
+    i++;
   }
 
   fin.close();
@@ -289,7 +289,7 @@ public:
 		if(top!=7)
 		{
 			top+=1;
-			strcpy(fp[top].getname(),f.getname());
+			strcpy(fp[top].name,f.name);
 			for(int i = 0; i < 8; i++)
 				fp[top].arg(i+1).setval(f.arg(i+1).value() , f.arg(i+1).rtype());
 		}
@@ -297,16 +297,16 @@ public:
 			cerr<<"[ERROR]Stack Overflow[ERROR]"<<endl;
 	}
 	void pop(func f) // takes out the last element in the stack
-	{
-		if(top!=-1)
-		{
-			top-=1;
-		}
-		else
-			cerr<<"[ERROR]Stack underflow[ERROR]"<<endl;
-	}
-	int l()
-	{return top;}
+    {
+        if(top!=-1)
+        {
+            top-=1;
+        }
+        else
+            cerr<<"[ERROR]Stack underflow[ERROR]"<<endl;
+    }
+    int l()
+    {return top;}
 } calls;
 
 void* genaddr(atom x)
@@ -317,39 +317,39 @@ void* genaddr(atom x)
 
 atom parsechar() // Parses single character
 {
-	char c;
-	File.get(c);
-	atom x;
-	x.setval(int(c), 'c');
-	return x;
+    char c;
+    File.get(c);
+    atom x;
+    x.setval(int(c), 'c');
+    return x;
 }
 
 atom parsequotes(char context = 'f') //Parses strings and passes back a ptr-atom
 {
-	int heapi;
-	char c;
-	int space = 0;
-	char* sptr = heap._alloc(heapi);
-	File.get(c);
-	while(c != '\"')
-	{
-		sptr[space] = c;
-		space++;
-		File.get(c);
-	}
-	atom x;
-	x.setval(heapi, 'p');
-	return x;
+    int heapi;
+    char c;
+    int space = 0;
+    char* sptr = heap._alloc(heapi);
+    File.get(c);
+    while(c != '\"')
+    {
+        sptr[space] = c;
+        space++;
+        File.get(c);
+    }
+    atom x;
+    x.setval(heapi, 'p');
+    return x;
 }
 
 atom parsequotes(char context ,char* s_address)
 {
-	int heapi;
-	char c;
-	int space = 0;
-	char* sptr = heap._alloc(heapi);
-	do
-	{
+    int heapi;
+    char c;
+    int space = 0;
+    char* sptr = heap._alloc(heapi);
+    do
+    {
 		c = s_address[space];
 		sptr[space] = c;
 		space++;
@@ -457,78 +457,74 @@ atom parselist(char context, int tc) // context being 'f' means file , 'm' means
 	char token[8];
 	func list;
 	calls.push(list);
-	char c;
+
 	int wc = 0; //current size of token being read
 	int c_arg = 0; //no. of arguments read
 	atom retom; // Atom to be returned
 	do
 	{
+		char c;
 		switch(context)
 		{
-			case 'f':
-				File.get(c);
-				break;
-			case 'm':
-				break;
-		default:
-				cerr<<"[ERROR]Unknown context[ERROR]";
-		}
-		switch(c)
-		{
-			case '(':
-				atom temp1(parsequotes(context));
-				list.setarg(c_arg, temp1);
-				wc = 0;
-				c_arg++;
-				break;
-			case ')':
-				break;
-			case '\'':
-				atom temp2(parsechar());
-				list.setarg(c_arg, temp2);
-				wc = 0;
-				c_arg++;
-				break;
-			case '\"':
-				atom temp3(parsequotes(context));
-				list.setarg(c_arg, temp3);
-				wc = 0;
-				c_arg++;
-				break;
-			case '{':
-				atom temp4(parseblock());
-				list.setarg(c_arg, temp4);
-				wc = 0;
-				c_arg++;
-				break;
-			case 32:
-				if(wc > 0)
-				{
-					if(c_arg > 0)
-					{
-						int heapi;
-						char* stp = heap._alloc(heapi, 8);
-						strcpy(stp, token);
-						atom temp; // temporary atom to hold value b4 passing into list
-						temp.setval(heapi, 'p');
-						list.setarg(c_arg,temp);
-					}
-					else
-					if(c_arg == 0)
-						list.setname(token);
-					else
-						cerr<<"[ERROR]Negative Current Argument for list in stack \"calls\"[ERROR]";
-					c_arg++;
-					wc = 0;
-				}
-				break;
-		default:
-			token[wc] = c;
-			wc++;
-		}
-		tc++;
-	}while(c!=')');
-	retom.set(eval(list));
+            case 'f':
+                File.get(c);
+                break;
+            case 'm':
+                break;
+        default:
+                cerr<<"[ERROR]Unknown context[ERROR]";
+        }
+		switch(token)
+        {
+            case '(':
+				list.setarg(c_arg, temp);
+                wc = 0;
+                c_arg++;
+                break;
+            case ')':
+                break;
+            case '\'':
+                atom temp(parsechar());
+                list.setarg(c_arg, temp);
+                wc = 0;
+                c_arg++;
+                break;
+            case '\"':
+                atom temp(parsequotes(context));
+                list.setarg(c_arg, temp;)
+                wc = 0;
+                c_arg++;
+                break;
+            case '{':
+                atom temp(parseblock());
+            case 32:
+                if(wc > 0)
+                {
+                    if(c_arg > 0)
+                    {
+                        int heapi;
+                        char* stp = heap._alloc(heapi, 8);
+                        strcpy(stp, token);
+                        atom temp; // temporary atom to hold value b4 passing into list
+                        temp.setval(heapi, 'p');
+                        list.setarg(c_arg,temp);
+                    }
+                    else
+                    if(c_arg == 0)
+                        list.setname(token);
+                    else
+                        cerr<<"[ERROR]Negative Current Argument for list in stack \"calls\"[ERROR]";
+                    c_arg++;
+                    wc = 0;
+                }
+                break;
+        default:
+            token[wc] = c;
+            wc++;
+        }
+        tc++;
+    }while(token!=')');
+    retom.set(eval(list));
 }
 
 
@@ -542,18 +538,18 @@ atom parselist(char context, int tc) // context being 'f' means file , 'm' means
 
   for(;;)
   {
-	gets(word);
+    gets(word);
 
-	if(strcmpi(word,"end")!=0)
-		fout<<word;
-	else
-		break;
+    if(strcmpi(word,"end")!=0)
+        fout<<word;
+    else
+        break;
   }
   fout.close();
 
 */ //Keep as ref , delete later
 
-void main()
+void main
 {
-	File.close();
+    File.close();
 }
